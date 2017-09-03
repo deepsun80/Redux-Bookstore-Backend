@@ -1,6 +1,6 @@
 "use strict"
 import React from 'react';
-import {Col, Row, Well, Button} from 'react-bootstrap';
+import {Image, Col, Row, Well, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
@@ -13,6 +13,7 @@ class BookItem extends React.Component {
             _id: this.props._id,
             title: this.props.title,
             description: this.props.description,
+            images: this.props.images,
             price: this.props.price,
             quantity: 1
         }]
@@ -28,7 +29,7 @@ class BookItem extends React.Component {
                  this.props.addToCart(book);      
                 } else {        
                     // WE NEED TO UPDATE QUANTITY        
-                    this.props.updateCart(_id, 1)      
+                    this.props.updateCart(_id, 1, this.props.cart)      
                 }    
             } else {      
                 // CART IS EMPTY      
@@ -39,9 +40,12 @@ class BookItem extends React.Component {
         return (
             <Well>
                 <Row>
-                    <Col xs={12}>
+                    <Col xs={12} sm={6}>
+                        <Image src={this.props.images} responsive/>
+                    </Col>
+                    <Col xs={12} sm={6} className="book_content">
                         <h6>{this.props.title}</h6>
-                        <p>{this.props.description}</p>
+                        <p className="book_description">{this.props.description}</p>
                         <h6>Price: ${this.props.price}</h6>
                         <Button onClick={this.handleCart.bind(this)} bsStyle='primary'>BUY NOW</Button>
                     </Col>

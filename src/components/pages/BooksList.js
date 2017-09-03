@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getBooks} from '../../actions/booksActions.js';
-import {Grid, Col, Row, Button} from 'react-bootstrap';
+import {Carousel, Grid, Col, Row, Button} from 'react-bootstrap';
 
 //Import Each Book Item
 import BookItem from './BookItem';
@@ -22,11 +22,12 @@ class BooksList extends React.Component {
     render() {
         const booksList = this.props.books.map((booksArray) => {
         return (
-            <Col key={booksArray._id}>
+            <Col xs={12} sm={6} md={4} key={booksArray._id}>
                 <BookItem 
                     _id = {booksArray._id}
                     title = {booksArray.title}
                     description = {booksArray.description}
+                    images = {booksArray.images}
                     price = {booksArray.price} 
                 />
             </Col>
@@ -35,13 +36,20 @@ class BooksList extends React.Component {
         return (
             <Grid>
                 <Row>
-                    <Cart />
+                    <Carousel>
+                        <Carousel.Item>
+                            <img width={900} height={100} alt="900x500" src="/images/Book1.jpg"/>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img width={900} height={100} alt="900x500" src="/images/Book2.jpg"/>
+                        </Carousel.Item>
+                    </Carousel>
                 </Row>
                 <Row>
-                    <Col xs = {12} sm = {6}>
-                        <BooksForm />
-                    </Col>
-                    <Col xs = {12} sm = {6} md = {4}>
+                    <Cart />
+                </Row>
+                <Row style={{marginTop:'15px'}}>
+                    <Col>
                         {booksList}
                     </Col>
                 </Row>

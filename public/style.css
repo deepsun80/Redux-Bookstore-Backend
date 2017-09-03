@@ -16,3 +16,11 @@ body {
 .badge {
     background-color: #e4aa48;
 }
+
+.book_content {
+    height: 250px;
+}
+.book_description {
+    word-wrap: break-word;
+    height: 140px;
+}

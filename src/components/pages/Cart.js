@@ -1,13 +1,18 @@
 "use strict"
 import React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import {Panel, Col, Row, Well, Button, ButtonGroup, Label, Modal} from 'react-bootstrap';
 
+import {bindActionCreators} from 'redux';
+
 //Import Action
-import {deleteCartItem, updateCart} from '../../actions/cartActions';
+import {deleteCartItem, updateCart, getCart} from '../../actions/cartActions';
 
 class Cart extends React.Component {
+    componentDidMount(){
+        this.props.getCart();  
+    }
+
     onDelete(_id) {
         const currentBookToDelete = this.props.cart;
         const indexToDelete = currentBookToDelete.findIndex((cart) => {
@@ -116,7 +121,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         deleteCartItem: deleteCartItem,
-        updateCart: updateCart
+        updateCart: updateCart,
+        getCart: getCart
     }, dispatch);
 }
 

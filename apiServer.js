@@ -3,6 +3,9 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
 var app = express();
 
 //app.use(logger('dev'));
@@ -13,7 +16,38 @@ app.use(cookieParser());
 
 //API
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/bookshop');
+//MONGO LAB
+mongoose.connect('mongodb://deepsun80:Tulsis79@ds121674.mlab.com:21674/react-redux-bookstore');
+//LOCAL HOSTING
+//mongoose.connect('mongodb://localhost:27017/bookshop');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, '# MongoDB - connection error:'));
+//---->>Set Up Sessions<<----
+app.use(session({
+  secret: 'mySecretString',
+  saveUninitialized: false,
+  resave: false,
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 2}, //2 Days in milliseconds
+  store: new MongoStore({mongooseConnection: db, ttl: 2 * 24 * 60 * 60})
+}));
+
+//----Save CART API Session-----
+app.post('/cart', function(req, res) {
+  var cart = req.body;
+  req.session.cart = cart;
+  req.session.save(function(err) {
+    if (err) throw err;
+    res.json(req.session.cart);
+  })
+});
+//-----Get CART API Session------
+app.get('/cart', function(req, res){
+  if(typeof req.session.cart !== 'undefined') {
+    res.json(req.session.cart);
+  }
+});
+//---->>End Session Set up<<----
 
 var Books = require('./models/books.js');
 
@@ -43,7 +77,7 @@ app.delete('/books/:_id', function(req, res) {
 
   Books.remove(query, function(err, books){
     if (err) {
-      throw err;
+      console.log("# API DELETE BOOKS: ", err);
     }
     res.json(books);
   })
@@ -70,6 +104,26 @@ app.put('/books/:_id', function(req, res){
     }
     res.json(books);
   })
+});
+
+//----GET Books Images API---//
+app.get('/images', (req, res) => {
+  const imgFolder = __dirname + '/public/images';
+  //Require File System
+  const fs = require('fs');
+  //Read all the files in the directory
+  fs.readdir(imgFolder, (err, files) => {
+    if (err) {        
+      return console.error(err);      
+    }
+    //Create an Empty Array
+    const filesArray = [];
+    // Iterate all images in directory and add to array
+    files.forEach((file) => {
+      filesArray.push({name:file});
+    });
+    res.json(filesArray);
+  });
 });
 
 //API End
